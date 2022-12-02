@@ -11,7 +11,6 @@ fn calories_by_elf(lines: &[String]) -> Vec<u32> {
         .collect()
 }
 
-
 fn calories_by_elf(lines: &[String]) -> Vec<u32> {
     let mut calories: Vec<u32> = Vec::new();
     let mut current_calorie_sum = 0;
@@ -59,15 +58,10 @@ pub fn run() -> (u32, u32) {
     (day1_result, day2_result)
 }
 
-#[cfg(test)]
-mod tests {
-    use super::part1;
-    use super::part2;
-
-    #[test]
-    fn it_works() {
-        let lines: Vec<String> = crate::aoc::lines_from_test(
-            r"1000
+#[test]
+fn it_works() {
+    let lines: Vec<String> = crate::aoc::lines_from_test(
+        r"1000
 2000
 3000
 
@@ -83,11 +77,10 @@ mod tests {
 10000
 
 ",
-        );
+    );
 
-        let part1_result = part1(&lines);
-        let part2_result = part2(&lines);
-        assert_eq!(24000, part1_result);
-        assert_eq!(45000, part2_result);
-    }
+    let part1_result = part1(&lines);
+    let part2_result = part2(&lines);
+    assert_eq!(24000, part1_result);
+    assert_eq!(45000, part2_result);
 }
