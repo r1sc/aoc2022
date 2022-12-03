@@ -2,6 +2,12 @@ mod day1;
 mod day2;
 mod day3;
 
-pub use day1::run as day1;
-pub use day2::run as day2;
-pub use day3::run as day3;
+use counted_array::counted_array;
+
+counted_array!(
+    pub const ALL_DAYS: [fn() -> (u32, u32); _] = [
+        day1::run,
+        day2::run,
+        day3::run
+    ]
+);
