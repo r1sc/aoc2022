@@ -12,14 +12,14 @@
                 "args": [
                     "build",
                     "--bin=aoc2022",
-                    "--package=aoc2022"
+                    "--package=aoc2022",
                 ],
                 "filter": {
                     "name": "aoc2022",
                     "kind": "bin"
                 }
             },
-            "args": [],
+            "args": ["5"],
             "cwd": "${workspaceFolder}"
         },
         {

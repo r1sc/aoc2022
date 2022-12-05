@@ -50,12 +50,12 @@ fn part2(lines: &[String]) -> u32 {
     calories.iter().take(3).sum()
 }
 
-pub fn run() -> (u32, u32) {
+pub fn run() -> (String, String) {
     let lines = crate::aoc::lines_from_file("day1.txt");
     let day1_result = part1(&lines);
     let day2_result = part2(&lines);
 
-    (day1_result, day2_result)
+    (day1_result.to_string(), day2_result.to_string())
 }
 
 #[test]
