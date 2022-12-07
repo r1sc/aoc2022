@@ -2,7 +2,7 @@ fn accumulate_scores(lines: &[String], f: fn(&str, &str) -> u32) -> u32 {
     let mut total_score: u32 = 0;
 
     for line in lines {
-        let mut splitted = line.split(" ");
+        let mut splitted = line.split(' ');
         let opponent = splitted.next().unwrap();
         let yours = splitted.next().unwrap();
 
@@ -12,6 +12,7 @@ fn accumulate_scores(lines: &[String], f: fn(&str, &str) -> u32) -> u32 {
     total_score
 }
 
+#[allow(clippy::identity_op)]
 fn part1(lines: &[String]) -> u32 {
     accumulate_scores(lines, |opponent, yours| match (opponent, yours) {
         ("A", "X") => 1 + 3,
@@ -30,6 +31,7 @@ fn part1(lines: &[String]) -> u32 {
     })
 }
 
+#[allow(clippy::identity_op)]
 fn part2(lines: &[String]) -> u32 {
     accumulate_scores(lines, |opponent, yours| match (opponent, yours) {
         ("A", "X") => 3 + 0,

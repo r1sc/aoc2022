@@ -39,7 +39,7 @@ fn part2(lines: &[String]) -> u32 {
         }
 
         // Find the item that all three elves has
-        let item_in_all_backpacks = total_items_by_elf.iter().find(|(_, a)| a.iter().all(|i| *i == true)).unwrap().0;
+        let item_in_all_backpacks = total_items_by_elf.iter().find(|(_, a)| a.iter().all(|i| *i)).unwrap().0;
 
         priorities.push(get_priority(*item_in_all_backpacks));
     }

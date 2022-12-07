@@ -4,7 +4,7 @@ fn parse_move(lines: &[String], move_fn: fn(u32, u32, u32, &mut Vec<Vec<char>>) 
     let mut states: Vec<Vec<char>> = Vec::new();
 
     for line in lines {
-        if line.trim().starts_with("1") {
+        if line.trim().starts_with('1') {
             // Header done
         } else if line.starts_with("move") {
             // Command
@@ -58,7 +58,7 @@ pub fn run() -> (String, String) {
     let day1_result = part1(&lines);
     let day2_result = part2(&lines);
 
-    (day1_result.to_string(), day2_result.to_string())
+    (day1_result, day2_result)
 }
 
 #[test]

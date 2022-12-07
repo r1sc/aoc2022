@@ -19,7 +19,7 @@ impl FromStr for Range {
     type Err = &'static str;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let mut fromto = s.split("-");
+        let mut fromto = s.split('-');
         let from: u32 = fromto.next().expect("Unexpected EOF").parse().expect("Failed to parse to u32");
         let to: u32 = fromto.next().expect("Unexpected EOF").parse().expect("Failed to parse to u32");
         Ok(Self { from, to })
@@ -30,7 +30,7 @@ fn count_ranges(lines: &[String], accumulator: fn(Range, Range) -> bool) -> u32 
     let mut counted = 0;
 
     for ranges in lines {
-        let mut splitted = ranges.split(",");
+        let mut splitted = ranges.split(',');
         let range1: Range = splitted.next().unwrap().parse().unwrap();
         let range2: Range = splitted.next().unwrap().parse().unwrap();
 
