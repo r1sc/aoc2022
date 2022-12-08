@@ -72,7 +72,7 @@ fn build_tree(lines: &[String]) -> FolderHandle {
     root
 }
 
-fn part1(lines: &[String]) -> String {
+fn part1(lines: &[String]) -> u64 {
     let tree = build_tree(lines);
     let mut sum_of_total_sizes_over_100000 = 0;
 
@@ -83,10 +83,10 @@ fn part1(lines: &[String]) -> String {
         }
     });
 
-    sum_of_total_sizes_over_100000.to_string()
+    sum_of_total_sizes_over_100000
 }
 
-fn part2(lines: &[String]) -> String {
+fn part2(lines: &[String]) -> u64 {
     let tree = build_tree(lines);
     let total_size = tree.borrow().compute_total_size();
 
@@ -106,7 +106,7 @@ fn part2(lines: &[String]) -> String {
         }
     });
 
-    smallest_yet_large_enough_size_found.to_string()
+    smallest_yet_large_enough_size_found
 }
 
 pub fn run() -> (String, String) {
@@ -114,7 +114,7 @@ pub fn run() -> (String, String) {
     let result_1 = part1(&lines);
     let result_2 = part2(&lines);
 
-    (result_1, result_2)
+    (result_1.to_string(), result_2.to_string())
 }
 
 #[test]
@@ -145,6 +145,6 @@ $ ls
 7214296 k",
     );
 
-    assert_eq!("95437", part1(&lines));
-    assert_eq!("24933642", part2(&lines));
+    assert_eq!(95437, part1(&lines));
+    assert_eq!(24933642, part2(&lines));
 }
