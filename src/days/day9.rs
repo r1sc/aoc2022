@@ -52,9 +52,9 @@ impl Debug for Rope {
 }
 
 impl Rope {
-    pub fn move_head(&mut self, direction: Direction, num_steps: u32) {
-        for step in 0..num_steps {
-            match direction {
+    pub fn move_head(&mut self, instruction: &MoveInstruction) {
+        for _step in 0..instruction.num_steps {
+            match instruction.direction {
                 Direction::Left => self.parts[0].0 -= 1,
                 Direction::Right => self.parts[0].0 += 1,
                 Direction::Up => self.parts[0].1 += 1,
@@ -84,49 +84,65 @@ impl Rope {
 
             self.tail_locations_visited.insert(parent);
 
-            // println!("Step: {}\n{:?}", step, self);
+            // println!("Step: {}\n{:?}", _step, self);
         }
     }
 }
 
-fn part1(lines: &[String]) -> usize {
+struct MoveInstruction {
+    direction: Direction,
+    num_steps: u32,
+}
+
+impl FromStr for MoveInstruction {
+    type Err = &'static str;
+
+    fn from_str(line: &str) -> Result<Self, Self::Err> {
+        let args: Vec<&str> = line.split_ascii_whitespace().collect();
+        let direction: Direction = args[0].parse().or(Err("Failed to parse direction"))?;
+        let num_steps: u32 = args[1].parse().or(Err("Failed to parse num steps"))?;
+
+        Ok(Self {
+            direction,
+            num_steps,
+        })
+    }
+}
+
+fn part1(instructions: &[MoveInstruction]) -> usize {
     let mut rope = Rope {
         parts: vec![(0, 0); 2],
-        tail_locations_visited: HashSet::new(),
+        ..Default::default()
     };
 
-    for line in lines {
-        let args: Vec<&str> = line.split_ascii_whitespace().collect();
-        let direction: Direction = args[0].parse().unwrap();
-        let num_steps: u32 = args[1].parse().unwrap();
-
-        rope.move_head(direction, num_steps);
+    for instruction in instructions {
+        rope.move_head(instruction);
     }
 
     rope.tail_locations_visited.len()
 }
 
-fn part2(lines: &[String]) -> usize {
+fn part2(instructions: &[MoveInstruction]) -> usize {
     let mut rope = Rope {
         parts: vec![(0, 0); 10],
-        tail_locations_visited: HashSet::new(),
+        ..Default::default()
     };
 
-    for line in lines {
-        let args: Vec<&str> = line.split_ascii_whitespace().collect();
-        let direction: Direction = args[0].parse().unwrap();
-        let num_steps: u32 = args[1].parse().unwrap();
-
-        rope.move_head(direction, num_steps);
+    for instruction in instructions {
+        rope.move_head(instruction);
     }
 
     rope.tail_locations_visited.len()
 }
 
 pub fn run() -> (String, String) {
-    let lines = crate::aoc::lines_from_file("day9.txt");
-    let result_1 = part1(&lines);
-    let result_2 = part2(&lines);
+    let instructions: Vec<MoveInstruction> = crate::aoc::lines_from_file("day9.txt")
+        .iter()
+        .map(|line| line.parse().expect("Failed to parse instruction"))
+        .collect();
+
+    let result_1 = part1(&instructions);
+    let result_2 = part2(&instructions);
 
     (result_1.to_string(), result_2.to_string())
 }
@@ -143,7 +159,11 @@ D 1
 L 5
 R 2",
     );
+    let instructions: Vec<MoveInstruction> = lines
+        .iter()
+        .map(|line| line.parse().expect("Failed to parse instruction"))
+        .collect();
 
-    assert_eq!(13, part1(&lines));
-    assert_eq!(1, part2(&lines));
+    assert_eq!(13, part1(&instructions));
+    assert_eq!(1, part2(&instructions));
 }
