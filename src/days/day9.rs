@@ -10,7 +10,7 @@ enum Direction {
 }
 
 impl FromStr for Direction {
-    type Err = &'static str;
+    type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
@@ -18,7 +18,7 @@ impl FromStr for Direction {
             "D" => Ok(Self::Down),
             "R" => Ok(Self::Right),
             "L" => Ok(Self::Left),
-            _ => panic!("Invalid direction {}", s),
+            _ => Err(format!("Invalid direction {}", s)),
         }
     }
 }
