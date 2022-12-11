@@ -1,5 +1,3 @@
-use std::{collections::HashMap, str::FromStr};
-
 enum Target {
     Old,
     Value(u64),
@@ -27,15 +25,15 @@ impl Monkey {
             match args[0] {
                 "  Starting items" => {
                     let parts: Vec<_> = args[1]
-                        .split(",")
+                        .split(',')
                         .map(|p| p.trim().parse().unwrap())
                         .collect();
 
                     starting_items = Some(parts);
                 }
                 "  Operation" => {
-                    let eq_parts: Vec<_> = args[1].split("=").collect();
-                    let op = if eq_parts[1].contains("*") { "*" } else { "+" };
+                    let eq_parts: Vec<_> = args[1].split('=').collect();
+                    let op = if eq_parts[1].contains('*') { "*" } else { "+" };
 
                     let left_right: Vec<_> = eq_parts[1].split(op).collect();
                     let right = left_right[1].trim();
@@ -65,7 +63,7 @@ impl Monkey {
 
         Ok(Self {
             divisible_by: divisable_by.unwrap(),
-            operation: operation,
+            operation,
             starting_items: starting_items.unwrap(),
             throw_to_when_true: throw_to_when_true.unwrap(),
             throw_to_when_false: throw_to_when_false.unwrap(),
@@ -89,12 +87,12 @@ fn do_round(monkeys: &mut Vec<Monkey>, divide_by_3: bool, modulo: u64) {
                 };
 
                 if divide_by_3 {
-                    new_worry_level = new_worry_level / 3;
+                    new_worry_level /= 3;
                 }
 
                 new_worry_level %= modulo;
 
-                let throw_to_index = if (new_worry_level % monkey.divisible_by) == 0 {
+                let throw_to_index = if new_worry_level % monkey.divisible_by == 0 {
                     monkey.throw_to_when_true
                 } else {
                     monkey.throw_to_when_false
@@ -119,7 +117,7 @@ fn part1(lines: &[String]) -> u64 {
 
     let modulo = monkeys.iter().map(|m| m.divisible_by).product();
 
-    for round in 0..20 {
+    for _round in 0..20 {
         do_round(&mut monkeys, true, modulo);
     }
 
@@ -143,7 +141,7 @@ fn part2(lines: &[String]) -> u64 {
 
     let modulo = monkeys.iter().map(|m| m.divisible_by).product();
 
-    for round in 0..10000 {
+    for _round in 0..10000 {
         do_round(&mut monkeys, false, modulo);
     }
 

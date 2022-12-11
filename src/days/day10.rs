@@ -58,7 +58,7 @@ fn part1(instructions: &[String]) -> i32 {
     x_at_cycle.values().sum()
 }
 
-fn part2(instructions: &[String]) -> usize {
+fn part2(_instructions: &[String]) -> usize {
     0
 }
 
