@@ -74,7 +74,7 @@ impl Monkey {
     }
 }
 
-fn do_round(monkeys: &mut Vec<Monkey>) {
+fn do_round(monkeys: &mut Vec<Monkey>, divide_by_3: bool, modulo: u64) {
     for i in 0..monkeys.len() {
         let mut items_to_throw: Vec<(usize, _)> = Vec::new();
         {
@@ -88,7 +88,11 @@ fn do_round(monkeys: &mut Vec<Monkey>) {
                     (_, _) => panic!("Invalid operation"),
                 };
 
-                new_worry_level /= 3;
+                if divide_by_3 {
+                    new_worry_level = new_worry_level / 3;
+                }
+
+                new_worry_level %= modulo;
 
                 let throw_to_index = if (new_worry_level % monkey.divisible_by) == 0 {
                     monkey.throw_to_when_true
@@ -113,12 +117,22 @@ fn part1(lines: &[String]) -> u64 {
         .map(|chunk| Monkey::parse(chunk).unwrap())
         .collect();
 
+    let modulo = monkeys.iter().map(|m| m.divisible_by).product();
+
     for round in 0..20 {
-        do_round(&mut monkeys);
+        do_round(&mut monkeys, true, modulo);
     }
 
-    monkeys.sort_by(|a, b| b.times_items_inspected.partial_cmp(&a.times_items_inspected).unwrap());
-    monkeys.iter().take(2).map(|m| m.times_items_inspected).product()
+    monkeys.sort_by(|a, b| {
+        b.times_items_inspected
+            .partial_cmp(&a.times_items_inspected)
+            .unwrap()
+    });
+    monkeys
+        .iter()
+        .take(2)
+        .map(|m| m.times_items_inspected)
+        .product()
 }
 
 fn part2(lines: &[String]) -> u64 {
@@ -127,12 +141,22 @@ fn part2(lines: &[String]) -> u64 {
         .map(|chunk| Monkey::parse(chunk).unwrap())
         .collect();
 
+    let modulo = monkeys.iter().map(|m| m.divisible_by).product();
+
     for round in 0..10000 {
-        do_round(&mut monkeys);
+        do_round(&mut monkeys, false, modulo);
     }
 
-    monkeys.sort_by(|a, b| b.times_items_inspected.partial_cmp(&a.times_items_inspected).unwrap());
-    monkeys.iter().take(2).map(|m| m.times_items_inspected).product()
+    monkeys.sort_by(|a, b| {
+        b.times_items_inspected
+            .partial_cmp(&a.times_items_inspected)
+            .unwrap()
+    });
+    monkeys
+        .iter()
+        .take(2)
+        .map(|m| m.times_items_inspected)
+        .product()
 }
 
 pub fn run() -> (String, String) {
@@ -177,5 +201,5 @@ Monkey 3:
     );
 
     assert_eq!(10605, part1(&lines));
-    // assert_eq!(2713310158, part2(&lines));
+    assert_eq!(2713310158, part2(&lines));
 }
