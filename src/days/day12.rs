@@ -68,8 +68,10 @@ fn part1(lines: &[String]) -> usize {
             for col in 0..grid.0[0].len() {
                 let elevation = grid.0[row][col];
                 if elevation == 'S' {
+                    grid.0[row][col] = 'a';
                     start = Some(Pos(col as i32, row as i32));
                 } else if elevation == 'E' {
+                    grid.0[row][col] = 'z';
                     goal = Some(Pos(col as i32, row as i32));
                 }
             }
@@ -77,10 +79,7 @@ fn part1(lines: &[String]) -> usize {
 
         (start.unwrap(), goal.unwrap())
     };
-
-    grid.0[start.1 as usize][start.0 as usize] = 'a';
-    grid.0[goal.1 as usize][goal.0 as usize] = 'z';
-
+    
     let result = bfs(&start, |p| p.successors(&grid), |p| *p == goal);
 
     result.unwrap().len() - 1
