@@ -47,12 +47,11 @@ impl Ord for Thing {
                     let left = &l[i];
                     let right = &r[i];
                     let res = left.cmp(right);
-                    match res {
-                        Ordering::Less => return res,
-                        Ordering::Greater => return res,
-                        Ordering::Equal => {}
+                    if res == Ordering::Less || res == Ordering::Equal {
+                        return res;
                     }
                 }
+
                 if l.len() < r.len() {
                     Ordering::Less
                 } else if l.len() == r.len() {
@@ -95,6 +94,7 @@ fn part1(lines: &[String]) -> usize {
     for (i, chunk) in chunks.iter().enumerate() {
         let (_, packet1) = parse_thing(&chunk[0]).unwrap();
         let (_, packet2) = parse_thing(&chunk[1]).unwrap();
+        
         if packet1.cmp(&packet2) == Ordering::Less {
             count_right_order.push(i + 1);
         }
