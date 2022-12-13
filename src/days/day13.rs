@@ -1,8 +1,13 @@
 use std::cmp::Ordering;
 
 use nom::{
-    branch::alt, bytes::complete::tag, character::complete::digit1, combinator::map_res,
-    multi::separated_list0, sequence::delimited, IResult,
+    branch::alt,
+    bytes::complete::tag,
+    character::complete::digit1,
+    combinator::{map, map_res},
+    multi::separated_list0,
+    sequence::delimited,
+    IResult,
 };
 
 #[derive(Debug)]
@@ -15,7 +20,7 @@ impl PartialEq for Thing {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
             (Thing::List(l), Thing::List(r)) => l.eq(r),
-            (Thing::List(l), Thing::Value(v)) => false,
+            (Thing::List(_), Thing::Value(_)) => false,
             (Thing::Value(_), Thing::List(_)) => false,
             (Thing::Value(vl), Thing::Value(vr)) => *vl == *vr,
         }
@@ -78,12 +83,8 @@ fn parse_list(input: &str) -> IResult<&str, Vec<Thing>> {
 
 fn parse_thing(input: &str) -> IResult<&str, Thing> {
     alt((
-        map_res(parse_value, |v| -> Result<Thing, &str> {
-            Ok(Thing::Value(v))
-        }),
-        map_res(parse_list, |l| -> Result<Thing, &str> {
-            Ok(Thing::List(l))
-        }),
+        map(parse_value, |v| Thing::Value(v)),
+        map(parse_list, |l| Thing::List(l)),
     ))(input)
 }
 
@@ -105,7 +106,11 @@ fn part1(lines: &[String]) -> usize {
 fn part2(lines: &[String]) -> usize {
     let chunks: Vec<_> = lines.split(|line| line.is_empty()).collect();
 
-    let mut packets = Vec::new();
+    let mut packets = vec![
+        Thing::List(vec![Thing::Value(2)]),
+        Thing::List(vec![Thing::Value(6)]),
+    ];
+
     for chunk in chunks {
         let (_, packet1) = parse_thing(&chunk[0]).unwrap();
         let (_, packet2) = parse_thing(&chunk[1]).unwrap();
@@ -113,45 +118,17 @@ fn part2(lines: &[String]) -> usize {
         packets.push(packet2);
     }
 
-    packets.push(Thing::List(vec![Thing::Value(2)]));
-
-    packets.push(Thing::List(vec![Thing::Value(6)]));
-
     packets.sort();
 
     let index_of_divider_2 = packets
         .iter()
-        .position(|thing| match thing {
-            Thing::List(l) => {
-                if l.len() == 0 {
-                    false
-                } else {
-                    match &l[0] {
-                        Thing::List(_) => false,
-                        Thing::Value(v) => *v == 2,
-                    }
-                }
-            }
-            Thing::Value(_) => false,
-        })
+        .position(|thing| thing == &Thing::List(vec![Thing::Value(2)]))
         .unwrap()
         + 1;
 
     let index_of_divider_6 = packets
         .iter()
-        .position(|thing| match thing {
-            Thing::List(l) => {
-                if l.len() == 0 {
-                    false
-                } else {
-                    match &l[0] {
-                        Thing::List(_) => false,
-                        Thing::Value(v) => *v == 6,
-                    }
-                }
-            }
-            Thing::Value(_) => false,
-        })
+        .position(|thing| thing == &Thing::List(vec![Thing::Value(6)]))
         .unwrap()
         + 1;
 
