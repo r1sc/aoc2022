@@ -76,7 +76,7 @@ mod range_tests {
     }
 }
 
-fn get_lines(lines: &[String], part1_line_to_test: i64) -> (i64, i64) {
+fn get_lines(lines: &[String], part1_line_to_test: i64, search_area: i64) -> (i64, i64) {
     let pos_lists: Vec<_> = lines
         .iter()
         .map(|line| {
@@ -92,13 +92,10 @@ fn get_lines(lines: &[String], part1_line_to_test: i64) -> (i64, i64) {
         })
         .collect();
 
-    // Key = row of grid, value = list of x ranges
-    // let mut ranges: HashMap<i64, Ranges> = HashMap::new();
-
     let mut part1_result = 0;
     let mut part2_result = 0;
 
-    for y in 0..=4000000 {
+    for y in 0..=search_area {
         let mut ranges = Ranges::default();
 
         for (sensor_x, sensor_y, beacon_x, beacon_y) in &pos_lists {
@@ -106,8 +103,8 @@ fn get_lines(lines: &[String], part1_line_to_test: i64) -> (i64, i64) {
             let disty = (beacon_y - sensor_y).abs();
             let distx = (beacon_x - sensor_x).abs();
             let distance = distx + disty;
-            
-            if y >= sensor_y - disty && y <= sensor_y + disty {
+
+            if y >= sensor_y - distance && y <= sensor_y + distance {
                 let x_dist = distance - (y - sensor_y).abs();
 
                 ranges.push(Range {
@@ -130,32 +127,9 @@ fn get_lines(lines: &[String], part1_line_to_test: i64) -> (i64, i64) {
     (part1_result, part2_result)
 }
 
-// fn part1(lines: &mut HashMap<i64, Ranges>, line_to_test: i64) -> i64 {
-//     let line = lines.get_mut(&line_to_test).unwrap();
-//     line.merge();
-
-//     let num: i64 = line.0.iter().map(|r| r.to - r.from).sum();
-
-//     num
-// }
-
-// fn part2(lines: &mut HashMap<i64, Ranges>) -> i64 {
-//     for y in 0..=4000000 {
-//         if let Some(lines) = lines.get_mut(&y) {
-//             lines.merge();
-
-//             if lines.0.len() > 1 {
-//                 let x = lines.0[1].from - 1;
-//                 return x * 4000000 + y;
-//             }
-//         }
-//     }
-//     0
-// }
-
 pub fn run() -> (String, String) {
     let lines = crate::aoc::lines_from_file("day15.txt");
-    let (result_1, result_2) = get_lines(&lines, 2000000);
+    let (result_1, result_2) = get_lines(&lines, 2000000, 4000000);
 
     (result_1.to_string(), result_2.to_string())
 }
@@ -179,7 +153,7 @@ Sensor at x=14, y=3: closest beacon is at x=15, y=3
 Sensor at x=20, y=1: closest beacon is at x=15, y=3",
     );
 
-    let (result_1, result_2) = get_lines(&lines, 10);
+    let (result_1, result_2) = get_lines(&lines, 10, 20);
 
     assert_eq!(26, result_1);
     assert_eq!(56000011, result_2);
