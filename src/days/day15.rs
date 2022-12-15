@@ -100,10 +100,13 @@ fn get_lines(lines: &[String]) -> HashMap<i64, Ranges> {
         let distx = (beacon_x - sensor_x).abs();
         let distance = distx + disty;
 
-        for y in -distance..=distance {
-            let x_dist = distance - y.abs();
+        let from = (sensor_y-distance).max(0);
+        let to = (sensor_y+distance).min(4000000);
+        
+        for y in from..=to {
+            let x_dist = distance - (y-sensor_y).abs();
 
-            let r = ranges.entry(sensor_y + y).or_default();
+            let r = ranges.entry(y).or_default();
             r.push(Range {
                 from: sensor_x - x_dist,
                 to: sensor_x + x_dist,
