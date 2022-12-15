@@ -76,7 +76,7 @@ mod range_tests {
     }
 }
 
-fn get_lines(lines: &[String]) -> HashMap<i64, Ranges> {
+fn get_lines(lines: &[String], part1_line_to_test: i64) -> (i64, i64) {
     let pos_lists: Vec<_> = lines
         .iter()
         .map(|line| {
@@ -93,59 +93,69 @@ fn get_lines(lines: &[String]) -> HashMap<i64, Ranges> {
         .collect();
 
     // Key = row of grid, value = list of x ranges
-    let mut ranges: HashMap<i64, Ranges> = HashMap::new();
-    for (sensor_x, sensor_y, beacon_x, beacon_y) in pos_lists {
-        // Go over each row, pushing ranges to the set of ranges
-        let disty = (beacon_y - sensor_y).abs();
-        let distx = (beacon_x - sensor_x).abs();
-        let distance = distx + disty;
+    // let mut ranges: HashMap<i64, Ranges> = HashMap::new();
 
-        let from = (sensor_y-distance).max(0);
-        let to = (sensor_y+distance).min(4000000);
-        
-        for y in from..=to {
-            let x_dist = distance - (y-sensor_y).abs();
+    let mut part1_result = 0;
+    let mut part2_result = 0;
 
-            let r = ranges.entry(y).or_default();
-            r.push(Range {
-                from: sensor_x - x_dist,
-                to: sensor_x + x_dist,
-            });
-        }
-    }
-
-    ranges
-}
-
-fn part1(lines: &mut HashMap<i64, Ranges>, line_to_test: i64) -> i64 {
-    let line = lines.get_mut(&line_to_test).unwrap();
-    line.merge();
-
-    let num: i64 = line.0.iter().map(|r| r.to - r.from).sum();
-
-    num
-}
-
-fn part2(lines: &mut HashMap<i64, Ranges>) -> i64 {
     for y in 0..=4000000 {
-        if let Some(lines) = lines.get_mut(&y) {
-            lines.merge();
+        let mut ranges = Ranges::default();
 
-            if lines.0.len() > 1 {
-                let x = lines.0[1].from - 1;
-                return x * 4000000 + y;
+        for (sensor_x, sensor_y, beacon_x, beacon_y) in &pos_lists {
+            // Go over each row, pushing ranges to the set of ranges
+            let disty = (beacon_y - sensor_y).abs();
+            let distx = (beacon_x - sensor_x).abs();
+            let distance = distx + disty;
+            
+            if y >= sensor_y - disty && y <= sensor_y + disty {
+                let x_dist = distance - (y - sensor_y).abs();
+
+                ranges.push(Range {
+                    from: sensor_x - x_dist,
+                    to: sensor_x + x_dist,
+                });
             }
         }
+
+        ranges.merge();
+        if y == part1_line_to_test {
+            part1_result = ranges.0.iter().map(|r| r.to - r.from).sum();
+        }
+        if ranges.0.len() > 1 {
+            let x = ranges.0[1].from - 1;
+            part2_result = x * 4000000 + y;
+        }
     }
-    0
+
+    (part1_result, part2_result)
 }
+
+// fn part1(lines: &mut HashMap<i64, Ranges>, line_to_test: i64) -> i64 {
+//     let line = lines.get_mut(&line_to_test).unwrap();
+//     line.merge();
+
+//     let num: i64 = line.0.iter().map(|r| r.to - r.from).sum();
+
+//     num
+// }
+
+// fn part2(lines: &mut HashMap<i64, Ranges>) -> i64 {
+//     for y in 0..=4000000 {
+//         if let Some(lines) = lines.get_mut(&y) {
+//             lines.merge();
+
+//             if lines.0.len() > 1 {
+//                 let x = lines.0[1].from - 1;
+//                 return x * 4000000 + y;
+//             }
+//         }
+//     }
+//     0
+// }
 
 pub fn run() -> (String, String) {
     let lines = crate::aoc::lines_from_file("day15.txt");
-    let mut line_ranges = get_lines(&lines);
-
-    let result_1 = part1(&mut line_ranges, 2000000);
-    let result_2 = part2(&mut line_ranges);
+    let (result_1, result_2) = get_lines(&lines, 2000000);
 
     (result_1.to_string(), result_2.to_string())
 }
@@ -168,7 +178,9 @@ Sensor at x=16, y=7: closest beacon is at x=15, y=3
 Sensor at x=14, y=3: closest beacon is at x=15, y=3
 Sensor at x=20, y=1: closest beacon is at x=15, y=3",
     );
-    let mut ranges = get_lines(&lines);
-    assert_eq!(26, part1(&mut ranges, 10));
-    assert_eq!(56000011, part2(&mut ranges));
+
+    let (result_1, result_2) = get_lines(&lines, 10);
+
+    assert_eq!(26, result_1);
+    assert_eq!(56000011, result_2);
 }
