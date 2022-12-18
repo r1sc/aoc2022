@@ -13,6 +13,10 @@ mod day7;
 mod day8;
 mod day9;
 mod day15;
+mod day16;
+mod day17;
+mod day18;
+
 use counted_array::counted_array;
 
 counted_array!(
@@ -31,6 +35,9 @@ counted_array!(
         day12::run,
         day13::run,
         day14::run,
-        day15::run
+        day15::run,
+        day16::run,
+        day17::run,
+        day18::run
     ]
 );

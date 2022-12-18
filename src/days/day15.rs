@@ -1,5 +1,4 @@
 use scan_fmt::scan_fmt;
-use std::collections::HashMap;
 
 #[derive(Clone, Copy)]
 struct Range {
@@ -76,7 +75,7 @@ mod range_tests {
     }
 }
 
-fn get_lines(lines: &[String], part1_line_to_test: i64, search_area: i64) -> (i64, i64) {
+fn get_results(lines: &[String], part1_line_to_test: i64, search_area: i64) -> (i64, i64) {
     let pos_lists: Vec<_> = lines
         .iter()
         .map(|line| {
@@ -129,7 +128,7 @@ fn get_lines(lines: &[String], part1_line_to_test: i64, search_area: i64) -> (i6
 
 pub fn run() -> (String, String) {
     let lines = crate::aoc::lines_from_file("day15.txt");
-    let (result_1, result_2) = get_lines(&lines, 2000000, 4000000);
+    let (result_1, result_2) = get_results(&lines, 2000000, 4000000);
 
     (result_1.to_string(), result_2.to_string())
 }
@@ -153,7 +152,7 @@ Sensor at x=14, y=3: closest beacon is at x=15, y=3
 Sensor at x=20, y=1: closest beacon is at x=15, y=3",
     );
 
-    let (result_1, result_2) = get_lines(&lines, 10, 20);
+    let (result_1, result_2) = get_results(&lines, 10, 20);
 
     assert_eq!(26, result_1);
     assert_eq!(56000011, result_2);

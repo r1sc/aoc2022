@@ -10,4 +10,6 @@ clap = { version = "4.0.29", features = ["derive"] }
 counted-array = "0.1.2"
 nom = "7.1.1"
 pathfinding = "4.0.0"
+rand = "0.8.5"
+regex = "1.7.0"
 scan_fmt = "0.2.6"
