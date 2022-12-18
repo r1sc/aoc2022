@@ -1,13 +1,10 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 use scan_fmt::scan_fmt;
 
-fn part_1(lines: &[String]) -> usize {
-    let coords: Vec<_> = lines
-        .iter()
-        .map(|line| scan_fmt!(line, "{d},{d},{d}", i32, i32, i32).unwrap())
-        .collect();
+type Point = (i32, i32, i32);
 
+fn part_1(coords: &Vec<Point>) -> usize {
     let mut grid = HashSet::new();
 
     for coord in coords.iter() {
@@ -47,12 +44,7 @@ fn part_1(lines: &[String]) -> usize {
     num_surfaces_visible
 }
 
-fn part_2(lines: &[String]) -> usize {
-    let coords: Vec<_> = lines
-        .iter()
-        .map(|line| scan_fmt!(line, "{d},{d},{d}", i32, i32, i32).unwrap())
-        .collect();
-
+fn part_2(coords: &Vec<Point>) -> usize {
     let mut rocks = HashSet::new();
 
     let mut min = (100, 100, 100);
@@ -93,20 +85,15 @@ fn part_2(lines: &[String]) -> usize {
     let mut visited = HashSet::new();
     let mut num_faces = 0;
     let mut queue = Vec::new();
-    queue.push(min.clone());
+    queue.push(min);
+    visited.insert(min);
 
     while !queue.is_empty() {
         let current = queue.pop();
 
         match current {
             Some(c) => {
-                if visited.contains(&c) {
-                    continue;
-                }
-
-                visited.insert(c);
-
-                let mut check_side = |cc: (i32, i32, i32)| {
+                let mut check_side = |cc: Point| {
                     if cc.0 >= min.0
                         && cc.0 <= max.0
                         && cc.1 >= min.1
@@ -117,8 +104,9 @@ fn part_2(lines: &[String]) -> usize {
                         if rocks.contains(&cc) {
                             // println!("Found face at {:?} from {:?}", &cc, &c);
                             num_faces += 1;
-                        } else {
+                        } else if !visited.contains(&cc) {
                             queue.push(cc);
+                            visited.insert(cc);
                         }
                     }
                 };
@@ -137,10 +125,18 @@ fn part_2(lines: &[String]) -> usize {
     num_faces
 }
 
+fn parse_lines(lines: &[String]) -> Vec<Point> {
+    lines
+        .iter()
+        .map(|line| scan_fmt!(line, "{d},{d},{d}", i32, i32, i32).unwrap())
+        .collect()
+}
+
 pub fn run() -> (String, String) {
     let lines = crate::aoc::lines_from_file("day18.txt");
-    let result_1 = part_1(&lines);
-    let result_2 = part_2(&lines);
+    let coords = parse_lines(&lines);
+    let result_1 = part_1(&coords);
+    let result_2 = part_2(&coords);
 
     (result_1.to_string(), result_2.to_string())
 }
@@ -153,8 +149,9 @@ fn it_works() {
 ",
     );
 
-    let result_1 = part_1(&lines);
-    let result_2 = part_2(&lines);
+    let coords = parse_lines(&lines);
+    let result_1 = part_1(&coords);
+    let result_2 = part_2(&coords);
 
     assert_eq!(10, result_1);
     assert_eq!(10, result_2);
@@ -178,8 +175,9 @@ fn it_works_2() {
 2,3,5",
     );
 
-    let result_1 = part_1(&lines);
-    let result_2 = part_2(&lines);
+    let coords = parse_lines(&lines);
+    let result_1 = part_1(&coords);
+    let result_2 = part_2(&coords);
 
     assert_eq!(64, result_1);
     assert_eq!(58, result_2);
